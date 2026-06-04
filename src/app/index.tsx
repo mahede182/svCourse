@@ -8,7 +8,7 @@ import {
 } from 'react-native';
 
 import type { Course } from '@/src/@types';
-import { supabase } from '@/src/services/supabase';
+import { supabase } from '@/src/config/supabase';
 
 // Memoized item renderer following AGENTS.md performance best practices
 const CourseCard = React.memo(({ item }: { item: Course }) => {
