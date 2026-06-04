@@ -7,7 +7,7 @@ import {
   View,
 } from 'react-native';
 
-import type { Course } from '@/src/services/database.types';
+import type { Course } from '@/src/@types';
 import { supabase } from '@/src/services/supabase';
 
 // Memoized item renderer following AGENTS.md performance best practices

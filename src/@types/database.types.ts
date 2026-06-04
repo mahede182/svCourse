@@ -51,7 +51,3 @@ export type Database = {
     };
   };
 };
-
-/** Convenience row types */
-export type Course = Database['public']['Tables']['courses']['Row'];
-export type Chapter = Database['public']['Tables']['chapters']['Row'];
