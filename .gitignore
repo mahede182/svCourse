@@ -1,15 +1,31 @@
-# Learn more https://docs.github.com/en/get-started/getting-started-with-git/ignoring-files
-
-# dependencies
+# ==============================
+# Dependencies
+# ==============================
 node_modules/
 
-# Expo
+# ==============================
+# Expo / React Native
+# ==============================
 .expo/
 dist/
 web-build/
 expo-env.d.ts
 
-# Native
+# EAS builds & updates
+.easignore
+
+# Generated native folders (managed workflow)
+/ios/
+/android/
+
+# ==============================
+# Metro Bundler
+# ==============================
+.metro-health-check*
+
+# ==============================
+# Native build artifacts & certs
+# ==============================
 .kotlin/
 *.orig.*
 *.jks
@@ -17,34 +33,82 @@ expo-env.d.ts
 *.p12
 *.key
 *.mobileprovision
+*.pem
 
-# Metro
-.metro-health-check*
+# ==============================
+# Environment variables
+# ==============================
+.env
+.env.*
+!.env.example
+!env-example
 
-# debug
+# ==============================
+# Debug logs
+# ==============================
 npm-debug.*
 yarn-debug.*
 yarn-error.*
+*.log
 
+# ==============================
 # macOS
+# ==============================
 .DS_Store
-*.pem
+.AppleDouble
+.LSOverride
+._*
+.Spotlight-V100
+.Trashes
 
-# local env files
-.env*.local
+# ==============================
+# Windows
+# ==============================
+Thumbs.db
+ehthumbs.db
+Desktop.ini
 
-# typescript
+# ==============================
+# Linux
+# ==============================
+*~
+
+# ==============================
+# IDE / Editor
+# ==============================
+.vscode/
+.idea/
+*.swp
+*.swo
+*.sublime-workspace
+*.sublime-project
+
+# ==============================
+# TypeScript
+# ==============================
 *.tsbuildinfo
 
-app-example
+# ==============================
+# Testing / Coverage
+# ==============================
+coverage/
+.jest/
 
-# generated native folders
-/ios
-/android
+# ==============================
+# Supabase (local dev)
+# ==============================
+supabase/.branches
+supabase/.temp/
 
+# ==============================
 # AI Agent Context & Memory
+# ==============================
 .claude/
 .agents/
-claude.md
-agents.md
+CLAUDE.md
+skills-lock.json
 
+# ==============================
+# Misc
+# ==============================
+app-example/
