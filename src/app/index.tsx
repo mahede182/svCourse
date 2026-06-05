@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import {
   ActivityIndicator,
   FlatList,
@@ -8,9 +8,7 @@ import {
 } from 'react-native';
 import { useQuery, useRealm } from '@realm/react';
 
-import { CourseModel } from '@/src/models';
-import { CourseRepository } from '@/src/repositories';
-import { supabase } from '@/src/config/supabase';
+import { CourseModel, useGetCoursesQuery, setRealmInstance } from '@/src/features/courses';
 
 const CourseCard = React.memo(({ item }: { item: CourseModel }) => {
   return (
@@ -33,27 +31,12 @@ CourseCard.displayName = 'CourseCard';
 export default function HomeScreen() {
   const realm = useRealm();
   const courses = useQuery(CourseModel);
-  const [syncing, setSyncing] = useState(false);
-  const [error, setError] = useState<string | null>(null);
 
-  // Sync remote Supabase courses into local Realm DB
   useEffect(() => {
-    async function syncCourses() {
-      setSyncing(true);
-      const { data, error: fetchError } = await supabase
-        .from('courses')
-        .select('*');
-
-      if (fetchError) {
-        setError(fetchError.message);
-      } else if (data) {
-        CourseRepository.upsertFromRemote(realm, data);
-      }
-      setSyncing(false);
-    }
-
-    syncCourses();
+    setRealmInstance(realm);
   }, [realm]);
+
+  const { isFetching, error } = useGetCoursesQuery();
 
   return (
     <View style={styles.container}>
@@ -65,17 +48,17 @@ export default function HomeScreen() {
         ListHeaderComponent={
           <View style={styles.header}>
             <Text style={styles.heading}>Courses</Text>
-            {syncing && <ActivityIndicator size="small" color="#818cf8" />}
+            {isFetching && <ActivityIndicator size="small" color="#818cf8" />}
           </View>
         }
         ListEmptyComponent={
-          syncing ? (
+          isFetching ? (
             <View style={styles.center}>
               <ActivityIndicator size="large" color="#818cf8" />
             </View>
           ) : (
             <Text style={styles.emptyText}>
-              {error ? `Error: ${error}` : 'No courses found.'}
+              {error ? `Sync failed — showing cached data` : 'No courses found.'}
             </Text>
           )
         }
@@ -142,10 +125,6 @@ const styles = StyleSheet.create({
     fontSize: 12,
     fontWeight: '600',
     color: '#a5b4fc',
-  },
-  errorText: {
-    color: '#f87171',
-    fontSize: 16,
   },
   emptyText: {
     color: '#64748b',

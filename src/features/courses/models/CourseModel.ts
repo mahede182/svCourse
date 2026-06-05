@@ -6,7 +6,6 @@ export class CourseModel extends Realm.Object<CourseModel> {
   courseDescription?: string;
   coverImageUrl?: string;
 
-  // Local-only fields
   is_enrolled!: boolean;
   sync_status!: string;
 
@@ -19,7 +18,6 @@ export class CourseModel extends Realm.Object<CourseModel> {
       courseDescription: 'string?',
       coverImageUrl: 'string?',
 
-      // Local-only — preserved during upserts
       is_enrolled: { type: 'bool', default: false },
       sync_status: { type: 'string', default: 'synced' },
     },

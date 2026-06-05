@@ -7,7 +7,6 @@ export class ChapterModel extends Realm.Object<ChapterModel> {
   content?: string;
   orderIndex!: number;
 
-  // Local-only field
   is_completed!: boolean;
 
   static schema: Realm.ObjectSchema = {
@@ -20,7 +19,6 @@ export class ChapterModel extends Realm.Object<ChapterModel> {
       content: 'string?',
       orderIndex: { type: 'int', default: 0 },
 
-      // Local-only — preserved during upserts
       is_completed: { type: 'bool', default: false },
     },
   };

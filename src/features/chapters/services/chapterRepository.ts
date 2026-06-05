@@ -1,8 +1,7 @@
 import Realm from 'realm';
-import { ChapterModel } from '@/src/models';
+import { ChapterModel } from '../models/ChapterModel';
 
 export const ChapterRepository = {
-  // Bulk upsert chapters from remote data while preserving local-only fields
   upsertFromRemote(
     realm: Realm,
     remoteChapters: Array<{
@@ -25,7 +24,6 @@ export const ChapterRepository = {
             title: remote.title,
             content: remote.content ?? undefined,
             orderIndex: remote.order_index,
-            // Preserve local-only field
             is_completed: existing?.is_completed ?? false,
           },
           Realm.UpdateMode.Modified
@@ -34,9 +32,6 @@ export const ChapterRepository = {
     });
   },
 
-  /**
-   * Mark a chapter as completed.
-   */
   markCompleted(realm: Realm, chapterId: string): void {
     realm.write(() => {
       const chapter = realm.objectForPrimaryKey(ChapterModel, chapterId);

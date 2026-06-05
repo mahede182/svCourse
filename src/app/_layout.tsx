@@ -1,11 +1,15 @@
-import 'react-native-url-polyfill/auto';
+import { OfflineBanner } from '@/src/shared/components/OfflineBanner';
+import { RealmProvider, StoreProvider } from '@/src/providers';
 import { Slot } from 'expo-router';
-import { RealmProvider } from '@/src/providers';
+import 'react-native-url-polyfill/auto';
 
 export default function RootLayout() {
   return (
-    <RealmProvider>
-      <Slot />
-    </RealmProvider>
+    <StoreProvider>
+      <RealmProvider>
+        <OfflineBanner />
+        <Slot />
+      </RealmProvider>
+    </StoreProvider>
   );
 }

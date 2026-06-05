@@ -1,6 +1,7 @@
 import React from 'react';
 import { RealmProvider as RealmContextProvider } from '@realm/react';
-import { CourseModel, ChapterModel } from '@/src/models';
+import { CourseModel } from '@/src/features/courses';
+import { ChapterModel } from '@/src/features/chapters';
 
 export function RealmProvider({ children }: { children: React.ReactNode }) {
   return (

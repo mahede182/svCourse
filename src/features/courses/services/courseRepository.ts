@@ -1,24 +1,15 @@
 import Realm from 'realm';
-import { CourseModel } from '@/src/models';
+import { CourseModel } from '../models/CourseModel';
 
 export const CourseRepository = {
-  // Bulk upsert courses from remote data while preserving local-only fields
   upsertFromRemote(
     realm: Realm,
     remoteCourses: Array<Record<string, unknown>>
   ): void {
-    if (remoteCourses.length > 0) {
-      console.log('[CourseRepo] First record keys:', Object.keys(remoteCourses[0]));
-      console.log('[CourseRepo] First record:', JSON.stringify(remoteCourses[0]));
-    }
-
     realm.write(() => {
       for (const remote of remoteCourses) {
         const id = (remote.id ?? remote.course_id) as string | undefined;
-        if (!id) {
-          console.warn('[CourseRepo] Skipping record with no id:', remote);
-          continue;
-        }
+        if (!id) continue;
 
         const existing = realm.objectForPrimaryKey(CourseModel, id);
 
@@ -38,10 +29,6 @@ export const CourseRepository = {
     });
   },
 
-  /**
-   * Toggle enrollment status for a course.
-   * Sets sync_status to 'pending' for background sync.
-   */
   toggleEnrollment(realm: Realm, courseId: string): void {
     realm.write(() => {
       const course = realm.objectForPrimaryKey(CourseModel, courseId);
@@ -52,9 +39,6 @@ export const CourseRepository = {
     });
   },
 
-  /**
-   * Mark a course's sync as complete.
-   */
   markSynced(realm: Realm, courseId: string): void {
     realm.write(() => {
       const course = realm.objectForPrimaryKey(CourseModel, courseId);
