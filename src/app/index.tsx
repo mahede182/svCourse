@@ -24,6 +24,15 @@ const CourseCard = React.memo(({ item }: { item: Course }) => {
 
 CourseCard.displayName = 'CourseCard';
 
+/**
+ * Render the home screen that fetches a list of courses and displays loading, error, or course list states.
+ *
+ * The screen requests courses from Supabase when mounted. While fetching it shows a centered activity indicator;
+ * if the request fails it shows a centered error message; otherwise it displays a scrollable list with a header,
+ * a memoized CourseCard for each item, and an empty-state message when no courses are available.
+ *
+ * @returns A JSX element representing the Home screen UI.
+ */
 export default function HomeScreen() {
   const [courses, setCourses] = useState<Course[]>([]);
   const [loading, setLoading] = useState(true);
