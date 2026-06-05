@@ -1,6 +1,6 @@
 import { OfflineBanner } from '@/src/shared/components/OfflineBanner';
 import { RealmProvider, StoreProvider } from '@/src/providers';
-import { Slot } from 'expo-router';
+import { Stack } from 'expo-router/stack';
 import 'react-native-url-polyfill/auto';
 
 export default function RootLayout() {
@@ -8,7 +8,11 @@ export default function RootLayout() {
     <StoreProvider>
       <RealmProvider>
         <OfflineBanner />
-        <Slot />
+        <Stack screenOptions={{ headerShown: false, contentStyle: { backgroundColor: '#f8fafc' } }}>
+          <Stack.Screen name="(auth)" />
+          <Stack.Screen name="(tabs)" />
+          <Stack.Screen name="course/[id]" />
+        </Stack>
       </RealmProvider>
     </StoreProvider>
   );
