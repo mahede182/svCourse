@@ -8,7 +8,6 @@ export default function SignInScreen() {
   const [password, setPassword] = useState('');
 
   const handleSignIn = () => {
-    // Navigate to tabs for now as a mock login
     router.replace('/(tabs)');
   };
 

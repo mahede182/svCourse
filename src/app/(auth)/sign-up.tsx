@@ -9,7 +9,6 @@ export default function SignUpScreen() {
   const [password, setPassword] = useState('');
 
   const handleSignUp = () => {
-    // Mock sign up
     router.replace('/(tabs)');
   };
 

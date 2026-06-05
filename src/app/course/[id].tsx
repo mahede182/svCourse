@@ -30,7 +30,6 @@ export default function CourseDetailScreen() {
 
   return (
     <View style={styles.container}>
-      {/* Header Overlay */}
       <View style={styles.headerOverlay}>
         <Pressable style={styles.iconButton} onPress={() => router.back()}>
           <Ionicons name="chevron-back" size={24} color={COLORS.text} />
@@ -45,7 +44,6 @@ export default function CourseDetailScreen() {
         contentContainerStyle={styles.contentContainer}
         showsVerticalScrollIndicator={false}
       >
-        {/* Hero Image */}
         <Image
           source={{ uri: course.coverImageUrl || 'https://images.unsplash.com/photo-1498050108023-c5249f4df085?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80' }}
           style={styles.coverImage}
@@ -54,7 +52,6 @@ export default function CourseDetailScreen() {
         />
 
         <View style={styles.detailsContainer}>
-          {/* Title & Instructor */}
           <Text style={styles.title} selectable>{course.title}</Text>
           
           <View style={styles.instructorRow}>
@@ -64,7 +61,6 @@ export default function CourseDetailScreen() {
             <Text style={styles.instructorName}>Jaxson Culhane</Text>
           </View>
 
-          {/* Stats Row */}
           <View style={styles.statsRow}>
             <View style={styles.statItem}>
               <Ionicons name="document-text-outline" size={16} color={COLORS.textSecondary} />
@@ -80,7 +76,6 @@ export default function CourseDetailScreen() {
             </View>
           </View>
 
-          {/* Progress (if enrolled) */}
           {course.is_enrolled && (
             <View style={styles.progressContainer}>
               <View style={styles.progressRow}>
@@ -92,7 +87,6 @@ export default function CourseDetailScreen() {
             </View>
           )}
 
-          {/* Tabs */}
           <View style={styles.tabContainer}>
             <Pressable
               style={[styles.tab, activeTab === 'details' && styles.tabActive]}
@@ -108,7 +102,6 @@ export default function CourseDetailScreen() {
             </Pressable>
           </View>
 
-          {/* Tab Content */}
           {activeTab === 'details' ? (
             <View style={styles.tabContent}>
               <Text style={styles.sectionTitle}>About</Text>
@@ -131,7 +124,6 @@ export default function CourseDetailScreen() {
         </View>
       </ScrollView>
 
-      {/* Bottom Action Bar */}
       <View style={styles.bottomBar}>
         <View style={styles.priceContainer}>
           <Text style={styles.priceLabel}>Price</Text>
@@ -159,11 +151,11 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   contentContainer: {
-    paddingBottom: 100, // Make room for bottom bar
+    paddingBottom: 100,
   },
   headerOverlay: {
     position: 'absolute',
-    top: 50, // Safe area approx
+    top: 50,
     left: 0,
     right: 0,
     flexDirection: 'row',
@@ -276,7 +268,7 @@ const styles = StyleSheet.create({
   },
   progressBarFill: {
     height: '100%',
-    backgroundColor: COLORS.error, // Using red/orange for progress like in the third design
+    backgroundColor: COLORS.error,
     borderRadius: BORDER_RADIUS.pill,
   },
   progressText: {
@@ -349,7 +341,7 @@ const styles = StyleSheet.create({
     backgroundColor: COLORS.surface,
     paddingHorizontal: SPACING.lg,
     paddingTop: SPACING.md,
-    paddingBottom: 40, // Safe area bottom
+    paddingBottom: 40,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',

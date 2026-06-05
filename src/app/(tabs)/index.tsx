@@ -8,7 +8,6 @@ import { Image } from 'expo-image';
 export default function DashboardScreen() {
   return (
     <ScrollView style={styles.container} contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
-      {/* Header */}
       <View style={styles.header}>
         <View>
           <Text style={styles.greeting}>Hello, User</Text>
@@ -20,7 +19,6 @@ export default function DashboardScreen() {
         </Pressable>
       </View>
 
-      {/* Promotional Banner */}
       <View style={styles.bannerContainer}>
         <View style={styles.bannerTextContainer}>
           <Text style={styles.bannerTitle}>Get 50% Off Premium</Text>
@@ -32,7 +30,6 @@ export default function DashboardScreen() {
         <Ionicons name="star" size={80} color="rgba(255,255,255,0.2)" style={styles.bannerIcon} />
       </View>
 
-      {/* Continue Learning */}
       <Text style={styles.sectionTitle}>Continue Learning</Text>
       <Pressable style={styles.continueCard} onPress={() => router.push('/(tabs)/courses')}>
         <View style={styles.continueIconContainer}>
@@ -51,7 +48,6 @@ export default function DashboardScreen() {
         <Ionicons name="play-circle" size={32} color={COLORS.primary} style={styles.playIcon} />
       </Pressable>
 
-      {/* Featured Course */}
       <View style={styles.sectionHeaderRow}>
         <Text style={styles.sectionTitle}>Featured Course</Text>
         <Text style={styles.seeAll} onPress={() => router.push('/(tabs)/courses')}>See All</Text>
@@ -78,7 +74,6 @@ export default function DashboardScreen() {
         </View>
       </Pressable>
 
-      {/* Explore Topics */}
       <View style={styles.sectionHeaderRow}>
         <Text style={styles.sectionTitle}>Explore Topics</Text>
         <Text style={styles.seeAll}>See All</Text>
