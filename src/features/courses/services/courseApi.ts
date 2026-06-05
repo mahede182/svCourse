@@ -1,13 +1,20 @@
+import { apiSlice } from '@/src/store';
 import Realm from 'realm';
-import { apiSlice } from '@/src/store/apiSlice';
-import { CourseModel } from '../models/CourseModel';
 import { CourseRepository } from './courseRepository';
 
 interface SupabaseCourseRow {
-  id: string;
+  course_id: string;
   title: string;
-  description: string | null;
-  cover_image_url: string | null;
+  description_short: string;
+  instructor_id: string | null;
+  instructor_name: string;
+  instructor_expertise_level: string | null;
+  duration_weeks: number;
+  price_usd: number;
+  is_premium: boolean;
+  tags: string[];
+  rating: number;
+  last_updated: string;
 }
 
 let realmInstance: Realm | null = null;
@@ -39,6 +46,7 @@ export const courseApi = apiSlice.injectEndpoints({
       },
     }),
   }),
+  overrideExisting: true,
 });
 
 export const { useGetCoursesQuery } = courseApi;

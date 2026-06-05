@@ -1,15 +1,40 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, Pressable, StyleSheet, ScrollView } from 'react-native';
-import { Link, router } from 'expo-router';
+import { View, Text, TextInput, Pressable, StyleSheet, ScrollView, Alert, ActivityIndicator } from 'react-native';
+import { Link } from 'expo-router';
 import { COLORS, SPACING, BORDER_RADIUS, SHADOWS } from '@/src/shared/constants/theme';
+import { supabase } from '@/src/shared/config/supabase';
 
 export default function SignUpScreen() {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [loading, setLoading] = useState(false);
 
-  const handleSignUp = () => {
-    router.replace('/(tabs)');
+  const handleSignUp = async () => {
+    if (!email || !password || !name) {
+      Alert.alert('Error', 'Please fill in all fields.');
+      return;
+    }
+
+    setLoading(true);
+    const { data, error } = await supabase.auth.signUp({
+      email,
+      password,
+      options: {
+        data: {
+          full_name: name,
+        },
+      },
+    });
+
+    setLoading(false);
+    if (error) {
+      Alert.alert('Sign Up Error', error.message);
+    } else if (data.session) {
+      // Navigation is handled automatically by RootLayoutNav
+    } else {
+      Alert.alert('Success', 'Please check your inbox for email verification!');
+    }
   };
 
   return (
@@ -56,8 +81,12 @@ export default function SignUpScreen() {
           />
         </View>
 
-        <Pressable style={styles.button} onPress={handleSignUp}>
-          <Text style={styles.buttonText}>Sign Up</Text>
+        <Pressable style={styles.button} onPress={handleSignUp} disabled={loading}>
+          {loading ? (
+            <ActivityIndicator color="#ffffff" />
+          ) : (
+            <Text style={styles.buttonText}>Sign Up</Text>
+          )}
         </Pressable>
       </View>
 

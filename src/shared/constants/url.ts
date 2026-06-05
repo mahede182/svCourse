@@ -1,0 +1,1 @@
+export const DEFAULT_COURSE_IMAGE = 'https://images.unsplash.com/photo-1498050108023-c5249f4df085?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80'

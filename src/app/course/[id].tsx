@@ -5,13 +5,19 @@ import { useObject, useRealm } from '@realm/react';
 import { Image } from 'expo-image';
 import { Ionicons } from '@expo/vector-icons';
 import { CourseModel, CourseRepository } from '@/src/features/courses';
+import { useAuth } from '@/src/providers';
 import { COLORS, SPACING, BORDER_RADIUS, SHADOWS } from '@/src/shared/constants/theme';
+import { DEFAULT_COURSE_IMAGE } from '@/src/shared/constants/url';
 
 export default function CourseDetailScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const realm = useRealm();
   const course = useObject(CourseModel, id);
+  const { user } = useAuth();
   const [activeTab, setActiveTab] = useState<'details' | 'lessons'>('details');
+
+  const isEnrolled = user ? course?.enrolledUsers.includes(user.id) : false;
+  const isFavourite = user ? course?.favouritedUsers.includes(user.id) : false;
 
   if (!course) {
     return (
@@ -25,7 +31,15 @@ export default function CourseDetailScreen() {
   }
 
   const toggleEnrollment = () => {
-    CourseRepository.toggleEnrollment(realm, id);
+    if (user) {
+      CourseRepository.toggleEnrollment(realm, id, user.id);
+    }
+  };
+
+  const toggleFavourite = () => {
+    if (user) {
+      CourseRepository.toggleFavourite(realm, id, user.id);
+    }
   };
 
   return (
@@ -34,8 +48,12 @@ export default function CourseDetailScreen() {
         <Pressable style={styles.iconButton} onPress={() => router.back()}>
           <Ionicons name="chevron-back" size={24} color={COLORS.text} />
         </Pressable>
-        <Pressable style={styles.iconButton}>
-          <Ionicons name="ellipsis-horizontal" size={24} color={COLORS.text} />
+        <Pressable style={styles.iconButton} onPress={toggleFavourite}>
+          <Ionicons 
+            name={isFavourite ? "heart" : "heart-outline"} 
+            size={24} 
+            color={isFavourite ? COLORS.error : COLORS.text} 
+          />
         </Pressable>
       </View>
 
@@ -45,7 +63,7 @@ export default function CourseDetailScreen() {
         showsVerticalScrollIndicator={false}
       >
         <Image
-          source={{ uri: course.coverImageUrl || 'https://images.unsplash.com/photo-1498050108023-c5249f4df085?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80' }}
+          source={{ uri: DEFAULT_COURSE_IMAGE }}
           style={styles.coverImage}
           contentFit="cover"
           transition={300}
@@ -58,7 +76,7 @@ export default function CourseDetailScreen() {
             <View style={styles.avatarPlaceholder}>
               <Ionicons name="person" size={16} color={COLORS.textSecondary} />
             </View>
-            <Text style={styles.instructorName}>Jaxson Culhane</Text>
+            <Text style={styles.instructorName}>{course.instructorName}</Text>
           </View>
 
           <View style={styles.statsRow}>
@@ -68,15 +86,15 @@ export default function CourseDetailScreen() {
             </View>
             <View style={styles.statItem}>
               <Ionicons name="time-outline" size={16} color={COLORS.textSecondary} />
-              <Text style={styles.statText}>8h 24m</Text>
+              <Text style={styles.statText}>{course.durationWeeks} Weeks</Text>
             </View>
             <View style={styles.statItem}>
               <Ionicons name="star" size={16} color={COLORS.warning} />
-              <Text style={styles.statText}>4.4/5</Text>
+              <Text style={styles.statText}>{course.rating?.toFixed(1) || '0.0'}/5</Text>
             </View>
           </View>
 
-          {course.is_enrolled && (
+          {isEnrolled && (
             <View style={styles.progressContainer}>
               <View style={styles.progressRow}>
                 <View style={styles.progressBarBg}>
@@ -106,7 +124,7 @@ export default function CourseDetailScreen() {
             <View style={styles.tabContent}>
               <Text style={styles.sectionTitle}>About</Text>
               <Text style={styles.description} selectable>
-                {course.courseDescription || 'No description provided for this course. It covers the fundamentals and practical applications.'}
+                {course.descriptionShort || 'No description provided for this course.'}
               </Text>
               <Text style={styles.readMore}>Show all</Text>
             </View>
@@ -127,14 +145,14 @@ export default function CourseDetailScreen() {
       <View style={styles.bottomBar}>
         <View style={styles.priceContainer}>
           <Text style={styles.priceLabel}>Price</Text>
-          <Text style={styles.priceValue}>Free</Text>
+          <Text style={styles.priceValue}>{course.priceUsd === 0 ? 'Free' : `$${course.priceUsd}`}</Text>
         </View>
         <Pressable
-          style={[styles.button, course.is_enrolled ? styles.buttonUnenroll : styles.buttonEnroll]}
+          style={[styles.button, isEnrolled ? styles.buttonUnenroll : styles.buttonEnroll]}
           onPress={toggleEnrollment}
         >
-          <Text style={[styles.buttonText, course.is_enrolled && styles.buttonTextUnenroll]}>
-            {course.is_enrolled ? 'Unenroll' : 'Enroll Now'}
+          <Text style={[styles.buttonText, isEnrolled && styles.buttonTextUnenroll]}>
+            {isEnrolled ? 'Unenroll' : 'Enroll Now'}
           </Text>
         </Pressable>
       </View>

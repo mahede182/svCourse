@@ -1,14 +1,31 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, Pressable, StyleSheet, ScrollView } from 'react-native';
-import { Link, router } from 'expo-router';
+import { View, Text, TextInput, Pressable, StyleSheet, ScrollView, Alert, ActivityIndicator } from 'react-native';
+import { Link } from 'expo-router';
 import { COLORS, SPACING, BORDER_RADIUS, SHADOWS } from '@/src/shared/constants/theme';
+import { supabase } from '@/src/shared/config/supabase';
 
 export default function SignInScreen() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [loading, setLoading] = useState(false);
 
-  const handleSignIn = () => {
-    router.replace('/(tabs)');
+  const handleSignIn = async () => {
+    if (!email || !password) {
+      Alert.alert('Error', 'Please enter both email and password.');
+      return;
+    }
+
+    setLoading(true);
+    const { error } = await supabase.auth.signInWithPassword({
+      email,
+      password,
+    });
+
+    setLoading(false);
+    if (error) {
+      Alert.alert('Sign In Error', error.message);
+    }
+    // Navigation is handled automatically by RootLayoutNav
   };
 
   return (
@@ -48,8 +65,12 @@ export default function SignInScreen() {
           <Text style={styles.forgotPasswordText}>Forgot password?</Text>
         </Pressable>
 
-        <Pressable style={styles.button} onPress={handleSignIn}>
-          <Text style={styles.buttonText}>Sign In</Text>
+        <Pressable style={styles.button} onPress={handleSignIn} disabled={loading}>
+          {loading ? (
+            <ActivityIndicator color="#ffffff" />
+          ) : (
+            <Text style={styles.buttonText}>Sign In</Text>
+          )}
         </Pressable>
       </View>
 

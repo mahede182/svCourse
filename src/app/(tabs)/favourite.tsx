@@ -1,24 +1,44 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { View, Text, StyleSheet, FlatList } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import { COLORS, SPACING, BORDER_RADIUS } from '@/src/shared/constants/theme';
+import { useQuery } from '@realm/react';
+import { CourseModel } from '@/src/features/courses';
+import { CourseCard } from '@/src/shared/components/CourseCard';
+import { useAuth } from '@/src/providers';
+import { COLORS, SPACING } from '@/src/shared/constants/theme';
 
 export default function FavouriteScreen() {
+  const { user } = useAuth();
+  const baseCourses = useQuery(CourseModel);
+
+  const favouriteCourses = useMemo(() => {
+    if (!user) return [];
+    return baseCourses.filtered('favouritedUsers CONTAINS $0', user.id);
+  }, [baseCourses, user]);
+
   return (
     <View style={styles.container}>
       <View style={styles.header}>
         <Text style={styles.heading}>Favourites</Text>
       </View>
 
-      <View style={styles.emptyContainer}>
-        <View style={styles.iconContainer}>
-          <Ionicons name="heart-outline" size={64} color={COLORS.textMuted} />
-        </View>
-        <Text style={styles.emptyTitle}>No favourites yet</Text>
-        <Text style={styles.emptySubtitle}>
-          Courses you favourite will appear here. Start exploring and save the ones you like!
-        </Text>
-      </View>
+      <FlatList
+        data={Array.from(favouriteCourses)}
+        renderItem={({ item }) => <CourseCard item={item} userId={user?.id} />}
+        keyExtractor={(item) => item._id}
+        contentContainerStyle={favouriteCourses.length === 0 ? styles.emptyListContainer : styles.list}
+        ListEmptyComponent={
+          <View style={styles.emptyContainer}>
+            <View style={styles.iconContainer}>
+              <Ionicons name="heart-outline" size={64} color={COLORS.textMuted} />
+            </View>
+            <Text style={styles.emptyTitle}>No favourites yet</Text>
+            <Text style={styles.emptySubtitle}>
+              Courses you favourite will appear here. Start exploring and save the ones you like!
+            </Text>
+          </View>
+        }
+      />
     </View>
   );
 }
@@ -39,12 +59,19 @@ const styles = StyleSheet.create({
     color: COLORS.text,
     letterSpacing: -0.5,
   },
+  list: {
+    paddingHorizontal: SPACING.lg,
+    paddingBottom: 40,
+  },
+  emptyListContainer: {
+    flex: 1,
+  },
   emptyContainer: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
     paddingHorizontal: SPACING.xl,
-    paddingBottom: 100, // offset visually
+    paddingBottom: 100, 
   },
   iconContainer: {
     width: 120,

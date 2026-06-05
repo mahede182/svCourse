@@ -1,9 +1,18 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { Tabs } from 'expo-router';
 import { COLORS } from '@/src/shared/constants/theme';
 import { Ionicons } from '@expo/vector-icons';
+import { useAuth } from '@/src/providers';
+import { useQuery } from '@realm/react';
+import { CourseModel } from '@/src/features/courses';
 
 export default function TabsLayout() {
+  const { user } = useAuth();
+  const courses = useQuery(CourseModel);
+  const favouriteCount = useMemo(() => {
+    if (!user) return 0;
+    return courses.filtered('favouritedUsers CONTAINS $0', user.id).length;
+  }, [courses, user]);
   return (
     <Tabs
       screenOptions={{
@@ -47,6 +56,8 @@ export default function TabsLayout() {
         name="favourite"
         options={{
           title: 'Favourite',
+          tabBarBadge: favouriteCount > 0 ? favouriteCount : undefined,
+          tabBarBadgeStyle: { backgroundColor: COLORS.error, color: '#fff' },
           tabBarIcon: ({ color, size }) => (
             <Ionicons name="heart" size={size} color={color} />
           ),

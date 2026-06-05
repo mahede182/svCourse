@@ -1,15 +1,20 @@
 import React from 'react';
 import { View, Text, StyleSheet, Pressable } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import { router } from 'expo-router';
 import { COLORS, SPACING, BORDER_RADIUS, SHADOWS } from '@/src/shared/constants/theme';
+import { supabase } from '@/src/shared/config/supabase';
+import { useAuth } from '@/src/providers';
 
 export default function ProfileScreen() {
-  const handleLogout = () => {
-    // In a real app, you would clear the auth token here
-    // e.g., using Supabase auth.signOut() or SecureStore
-    router.replace('/(auth)/sign-in');
+  const { user } = useAuth();
+  
+  const handleLogout = async () => {
+    await supabase.auth.signOut();
+    // Navigation is handled automatically by RootLayoutNav
   };
+
+  const displayName = user?.user_metadata?.full_name || 'User';
+  const displayEmail = user?.email || 'No email provided';
 
   return (
     <View style={styles.container}>
@@ -21,8 +26,8 @@ export default function ProfileScreen() {
         <View style={styles.avatarContainer}>
           <Ionicons name="person" size={40} color={COLORS.primary} />
         </View>
-        <Text style={styles.userName}>John Doe</Text>
-        <Text style={styles.userEmail}>john.doe@example.com</Text>
+        <Text style={styles.userName}>{displayName}</Text>
+        <Text style={styles.userEmail}>{displayEmail}</Text>
       </View>
 
       <View style={styles.menuContainer}>

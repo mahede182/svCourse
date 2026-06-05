@@ -1,2 +1,3 @@
-export { RealmProvider } from './RealmProvider';
-export { StoreProvider } from './StoreProvider';
+export * from './RealmProvider';
+export * from './StoreProvider';
+export * from './AuthProvider';

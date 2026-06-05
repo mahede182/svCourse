@@ -5,7 +5,11 @@ import { ChapterModel } from '@/src/features/chapters';
 
 export function RealmProvider({ children }: { children: React.ReactNode }) {
   return (
-    <RealmContextProvider schema={[CourseModel, ChapterModel]}>
+    <RealmContextProvider 
+      schema={[CourseModel, ChapterModel]} 
+      schemaVersion={3} 
+      deleteRealmIfMigrationNeeded={true}
+    >
       {children}
     </RealmContextProvider>
   );

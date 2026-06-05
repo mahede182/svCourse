@@ -1,6 +1,7 @@
 import React from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 import Animated, { FadeInUp, FadeOutUp } from 'react-native-reanimated';
+import { COLORS } from '../constants/theme';
 import { useNetworkStatus } from '../hooks/useNetworkStatus';
 
 export function OfflineBanner() {
@@ -16,7 +17,7 @@ export function OfflineBanner() {
     >
       <View style={styles.dot} />
       <Text style={styles.text}>
-        You're offline — changes will sync when reconnected
+        You're offline
       </Text>
     </Animated.View>
   );
@@ -26,19 +27,20 @@ const styles = StyleSheet.create({
   banner: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#1e1b4b',
+    backgroundColor: COLORS.error,
     paddingHorizontal: 16,
     paddingVertical: 10,
     gap: 8,
+    marginTop: 24,
   },
   dot: {
     width: 8,
     height: 8,
     borderRadius: 4,
-    backgroundColor: '#f87171',
+    backgroundColor: COLORS.background,
   },
   text: {
-    color: '#c7d2fe',
+    color: COLORS.background,
     fontSize: 13,
     fontWeight: '500',
     flex: 1,
