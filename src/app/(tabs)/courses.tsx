@@ -1,10 +1,8 @@
+import { AppActivityIndicator } from '@/src/shared/components/AppActivityIndicator';
 import { Ionicons } from '@expo/vector-icons';
 import { useQuery, useRealm } from '@realm/react';
-import { Image } from 'expo-image';
-import { Link } from 'expo-router';
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import {
-  ActivityIndicator,
   FlatList,
   Pressable,
   RefreshControl,
@@ -16,11 +14,10 @@ import {
 } from 'react-native';
 
 import { CourseModel, setRealmInstance, useGetCoursesQuery } from '@/src/features/courses';
+import { useAuth } from '@/src/providers';
 import { BORDER_RADIUS, COLORS, SHADOWS, SPACING } from '@/src/shared/constants/theme';
-import { DEFAULT_COURSE_IMAGE } from '@/src/shared/constants/url';
 import { useDebounce } from '@/src/shared/hooks/useDebounce';
 import { setSearchQuery, toggleEnrolledFilter, useAppDispatch, useAppSelector } from '@/src/store';
-import { useAuth } from '@/src/providers';
 
 import { CourseCard } from '@/src/shared/components/CourseCard';
 
@@ -28,7 +25,7 @@ export default function CoursesScreen() {
   const realm = useRealm();
   const dispatch = useAppDispatch();
   const { user } = useAuth();
-  
+
   const { searchQuery, isEnrolledFilter, sortOption } = useAppSelector((state) => state.ui);
 
   const [localSearch, setLocalSearch] = useState(searchQuery);
@@ -47,14 +44,14 @@ export default function CoursesScreen() {
   const { isFetching, error, refetch } = useGetCoursesQuery();
 
   const baseCourses = useQuery(CourseModel);
-  
+
   const courses = useMemo(() => {
     let result = baseCourses;
 
     if (searchQuery) {
       result = result.filtered('title CONTAINS[c] $0 OR descriptionShort CONTAINS[c] $0', searchQuery);
     }
-    
+
     if (isEnrolledFilter && user?.id) {
       result = result.filtered('enrolledUsers CONTAINS $0', user.id);
     }
@@ -146,9 +143,9 @@ export default function CoursesScreen() {
           />
         }
         ListEmptyComponent={
-          isFetching ? (
+          true ? (
             <View style={styles.center}>
-              <ActivityIndicator size="large" color={COLORS.primary} />
+              <AppActivityIndicator size="large" />
             </View>
           ) : (
             <View style={styles.emptyContainer}>

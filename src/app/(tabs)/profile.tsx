@@ -1,15 +1,19 @@
-import React from 'react';
-import { View, Text, StyleSheet, Pressable } from 'react-native';
-import { Ionicons } from '@expo/vector-icons';
-import { COLORS, SPACING, BORDER_RADIUS, SHADOWS } from '@/src/shared/constants/theme';
-import { supabase } from '@/src/shared/config/supabase';
 import { useAuth } from '@/src/providers';
+import { AppActivityIndicator } from '@/src/shared/components/AppActivityIndicator';
+import { supabase } from '@/src/shared/config/supabase';
+import { BORDER_RADIUS, COLORS, SHADOWS, SPACING } from '@/src/shared/constants/theme';
+import { Ionicons } from '@expo/vector-icons';
+import React, { useState } from 'react';
+import { Pressable, StyleSheet, Text, View } from 'react-native';
 
 export default function ProfileScreen() {
   const { user } = useAuth();
-  
+  const [loading, setLoading] = useState(false);
+
   const handleLogout = async () => {
+    setLoading(true);
     await supabase.auth.signOut();
+    setLoading(false);
     // Navigation is handled automatically by RootLayoutNav
   };
 
@@ -18,6 +22,13 @@ export default function ProfileScreen() {
 
   return (
     <View style={styles.container}>
+      {loading && (
+        <View style={styles.overlay}>
+          <View style={styles.loaderContainer}>
+            <AppActivityIndicator size="large" />
+          </View>
+        </View>
+      )}
       <View style={styles.header}>
         <Text style={styles.headerTitle}>Profile</Text>
       </View>
@@ -47,11 +58,13 @@ export default function ProfileScreen() {
           <Ionicons name="chevron-forward" size={20} color={COLORS.textMuted} />
         </Pressable>
 
-        <Pressable style={[styles.menuItem, styles.logoutItem]} onPress={handleLogout}>
+        <Pressable style={[styles.menuItem, styles.logoutItem]} onPress={handleLogout} disabled={loading}>
           <View style={[styles.menuIconBg, styles.logoutIconBg]}>
             <Ionicons name="log-out-outline" size={20} color={COLORS.error} />
           </View>
+
           <Text style={styles.logoutText}>Log Out</Text>
+
         </Pressable>
       </View>
     </View>
@@ -142,5 +155,22 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: '700',
     color: COLORS.error,
+  },
+  overlay: {
+    ...StyleSheet.absoluteFillObject,
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    justifyContent: 'center',
+    alignItems: 'center',
+    zIndex: 9999,
+  },
+  loaderContainer: {
+    backgroundColor: '#ffffff',
+    padding: 24,
+    borderRadius: 20,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.15,
+    shadowRadius: 12,
+    elevation: 5,
   },
 });

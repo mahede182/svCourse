@@ -1,21 +1,37 @@
-import React, { useState } from 'react';
-import { View, Text, TextInput, Pressable, StyleSheet, ScrollView, Alert, ActivityIndicator } from 'react-native';
-import { Link } from 'expo-router';
-import { COLORS, SPACING, BORDER_RADIUS, SHADOWS } from '@/src/shared/constants/theme';
+import { AppActivityIndicator } from '@/src/shared/components/AppActivityIndicator';
 import { supabase } from '@/src/shared/config/supabase';
+import { BORDER_RADIUS, COLORS, SHADOWS, SPACING } from '@/src/shared/constants/theme';
+import { AppLogger } from '@/src/utils/applogger';
+import { validateEmail } from '@/src/utils/helper';
+import { showToast } from '@/src/utils/toast';
+import { Link } from 'expo-router';
+import React, { useState } from 'react';
+import { Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
+import { KeyboardAwareScrollView } from 'react-native-keyboard-controller';
+import { useKeyboardAnimation } from '@/src/shared/hooks/useKeyboardAnimation';
 
 export default function SignInScreen() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
 
+  const logger = new AppLogger('SignInScreen');
+  useKeyboardAnimation();
+
   const handleSignIn = async () => {
     if (!email || !password) {
-      Alert.alert('Error', 'Please enter both email and password.');
+      showToast({ type: 'error', title: 'Validation Error', message: 'Please enter both email and password.' });
+      return;
+    }
+
+    if (!validateEmail(email)) {
+      showToast({ type: 'error', title: 'Invalid Email', message: 'Please enter a valid email address.' });
       return;
     }
 
     setLoading(true);
+    logger.info(`Attempting sign-in for email: ${email}`);
+
     const { error } = await supabase.auth.signInWithPassword({
       email,
       password,
@@ -23,66 +39,78 @@ export default function SignInScreen() {
 
     setLoading(false);
     if (error) {
-      Alert.alert('Sign In Error', error.message);
+      logger.error(`Sign in failed: ${error.message}`);
+      showToast({ type: 'error', title: 'Sign In Error', message: error.message });
+    } else {
+      logger.info('Sign in successful.');
     }
-    // Navigation is handled automatically by RootLayoutNav
   };
 
   return (
-    <ScrollView contentContainerStyle={styles.container} keyboardShouldPersistTaps="handled">
-      <View style={styles.header}>
-        <Text style={styles.title}>Welcome back</Text>
-        <Text style={styles.subtitle}>Sign in to continue learning</Text>
-      </View>
-
-      <View style={styles.form}>
-        <View style={styles.inputGroup}>
-          <Text style={styles.label}>Email Address</Text>
-          <TextInput
-            style={styles.input}
-            placeholder="you@example.com"
-            placeholderTextColor={COLORS.textMuted}
-            keyboardType="email-address"
-            autoCapitalize="none"
-            value={email}
-            onChangeText={setEmail}
-          />
+    <View style={{ flex: 1, backgroundColor: COLORS.background }}>
+      {loading && (
+        <View style={styles.overlay}>
+          <View style={styles.loaderContainer}>
+            <AppActivityIndicator size="large" />
+          </View>
+        </View>
+      )}
+      <KeyboardAwareScrollView
+        bottomOffset={40}
+        contentContainerStyle={styles.container}
+        showsVerticalScrollIndicator={false}
+        keyboardShouldPersistTaps="handled"
+      >
+        <View style={styles.header}>
+          <Text style={styles.title}>Welcome back</Text>
+          <Text style={styles.subtitle}>Sign in to continue learning</Text>
         </View>
 
-        <View style={styles.inputGroup}>
-          <Text style={styles.label}>Password</Text>
-          <TextInput
-            style={styles.input}
-            placeholder="••••••••"
-            placeholderTextColor={COLORS.textMuted}
-            secureTextEntry
-            value={password}
-            onChangeText={setPassword}
-          />
-        </View>
+        <View style={styles.form}>
+          <View style={styles.inputGroup}>
+            <Text style={styles.label}>Email Address</Text>
+            <TextInput
+              style={styles.input}
+              placeholder="you@example.com"
+              placeholderTextColor={COLORS.textMuted}
+              keyboardType="email-address"
+              autoCapitalize="none"
+              value={email}
+              onChangeText={setEmail}
+            />
+          </View>
 
-        <Pressable style={styles.forgotPassword}>
-          <Text style={styles.forgotPasswordText}>Forgot password?</Text>
-        </Pressable>
+          <View style={styles.inputGroup}>
+            <Text style={styles.label}>Password</Text>
+            <TextInput
+              style={styles.input}
+              placeholder="••••••••"
+              placeholderTextColor={COLORS.textMuted}
+              secureTextEntry
+              value={password}
+              onChangeText={setPassword}
+            />
+          </View>
 
-        <Pressable style={styles.button} onPress={handleSignIn} disabled={loading}>
-          {loading ? (
-            <ActivityIndicator color="#ffffff" />
-          ) : (
-            <Text style={styles.buttonText}>Sign In</Text>
-          )}
-        </Pressable>
-      </View>
-
-      <View style={styles.footer}>
-        <Text style={styles.footerText}>Don't have an account? </Text>
-        <Link href="/(auth)/sign-up" asChild>
-          <Pressable>
-            <Text style={styles.footerLink}>Sign up</Text>
+          <Pressable style={styles.forgotPassword}>
+            <Text style={styles.forgotPasswordText}>Forgot password?</Text>
           </Pressable>
-        </Link>
-      </View>
-    </ScrollView>
+
+          <Pressable style={styles.button} onPress={handleSignIn} disabled={loading}>
+            <Text style={styles.buttonText}>Sign In</Text>
+          </Pressable>
+        </View>
+
+        <View style={styles.footer}>
+          <Text style={styles.footerText}>Don't have an account? </Text>
+          <Link href="/(auth)/sign-up" asChild>
+            <Pressable>
+              <Text style={styles.footerLink}>Sign up</Text>
+            </Pressable>
+          </Link>
+        </View>
+      </KeyboardAwareScrollView>
+    </View>
   );
 }
 
@@ -166,5 +194,22 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: COLORS.primary,
     fontWeight: '700',
+  },
+  overlay: {
+    ...StyleSheet.absoluteFillObject,
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    justifyContent: 'center',
+    alignItems: 'center',
+    zIndex: 9999,
+  },
+  loaderContainer: {
+    backgroundColor: '#ffffff',
+    padding: 24,
+    borderRadius: 20,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.15,
+    shadowRadius: 12,
+    elevation: 5,
   },
 });

@@ -1,9 +1,15 @@
+import { Stack, useRouter, useSegments } from 'expo-router';
+import * as ExpoSplashScreen from 'expo-splash-screen';
 import { useEffect } from 'react';
-import { Stack, useSegments, useRouter } from 'expo-router';
+import Toast from 'react-native-toast-message';
 import 'react-native-url-polyfill/auto';
 
+import { AuthProvider, RealmProvider, StoreProvider, useAuth } from '@/src/providers';
 import { OfflineBanner } from '@/src/shared/components/OfflineBanner';
-import { RealmProvider, StoreProvider, AuthProvider, useAuth } from '@/src/providers';
+import { SplashScreen } from '@/src/shared/components/SplashScreen';
+import { KeyboardProvider } from '../providers/KeyboardProvider';
+
+ExpoSplashScreen.preventAutoHideAsync().catch(() => { });
 
 // The navigation logic must be inside the AuthProvider so it can access useAuth
 function RootLayoutNav() {
@@ -24,25 +30,28 @@ function RootLayoutNav() {
   }, [session, isInitialized, segments, router]);
 
   return (
-    <>
+    <SplashScreen isReady={isInitialized}>
       <OfflineBanner />
       <Stack screenOptions={{ headerShown: false, contentStyle: { backgroundColor: '#f8fafc' } }}>
         <Stack.Screen name="(auth)" />
         <Stack.Screen name="(tabs)" />
         <Stack.Screen name="course/[id]" />
       </Stack>
-    </>
+    </SplashScreen>
   );
 }
 
 export default function RootLayout() {
   return (
     <StoreProvider>
-      <RealmProvider>
-        <AuthProvider>
-          <RootLayoutNav />
-        </AuthProvider>
-      </RealmProvider>
+      <KeyboardProvider>
+        <RealmProvider>
+          <AuthProvider>
+            <RootLayoutNav />
+            <Toast />
+          </AuthProvider>
+        </RealmProvider>
+      </KeyboardProvider>
     </StoreProvider>
   );
 }

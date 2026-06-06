@@ -1,8 +1,14 @@
-import React, { useState } from 'react';
-import { View, Text, TextInput, Pressable, StyleSheet, ScrollView, Alert, ActivityIndicator } from 'react-native';
-import { Link } from 'expo-router';
-import { COLORS, SPACING, BORDER_RADIUS, SHADOWS } from '@/src/shared/constants/theme';
+import { AppActivityIndicator } from '@/src/shared/components/AppActivityIndicator';
 import { supabase } from '@/src/shared/config/supabase';
+import { BORDER_RADIUS, COLORS, SHADOWS, SPACING } from '@/src/shared/constants/theme';
+import { useKeyboardAnimation } from '@/src/shared/hooks/useKeyboardAnimation';
+import { AppLogger } from '@/src/utils/applogger';
+import { validateEmail, validatePassword } from '@/src/utils/helper';
+import { showToast } from '@/src/utils/toast';
+import { Link } from 'expo-router';
+import React, { useState } from 'react';
+import { Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
+import { KeyboardAwareScrollView } from 'react-native-keyboard-controller';
 
 export default function SignUpScreen() {
   const [name, setName] = useState('');
@@ -10,13 +16,28 @@ export default function SignUpScreen() {
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
 
+  const logger = new AppLogger('SignUpScreen');
+  useKeyboardAnimation();
+
   const handleSignUp = async () => {
     if (!email || !password || !name) {
-      Alert.alert('Error', 'Please fill in all fields.');
+      showToast({ type: 'error', title: 'Validation Error', message: 'Please fill in all fields.' });
+      return;
+    }
+
+    if (!validateEmail(email)) {
+      showToast({ type: 'error', title: 'Invalid Email', message: 'Please enter a valid email address.' });
+      return;
+    }
+
+    if (!validatePassword(password)) {
+      showToast({ type: 'error', title: 'Weak Password', message: 'Password must be 6-16 characters with at least one number and special character.' });
       return;
     }
 
     setLoading(true);
+    logger.info(`Attempting sign-up for email: ${email}`);
+
     const { data, error } = await supabase.auth.signUp({
       email,
       password,
@@ -29,76 +50,88 @@ export default function SignUpScreen() {
 
     setLoading(false);
     if (error) {
-      Alert.alert('Sign Up Error', error.message);
+      logger.error(`Sign up failed: ${error.message}`);
+      showToast({ type: 'error', title: 'Sign Up Error', message: error.message });
     } else if (data.session) {
-      // Navigation is handled automatically by RootLayoutNav
+      logger.info('Sign up successful, session established.');
     } else {
-      Alert.alert('Success', 'Please check your inbox for email verification!');
+      logger.info('Sign up successful, pending email verification.');
+      showToast({ type: 'success', title: 'Success', message: 'Please check your inbox for email verification!' });
     }
   };
 
   return (
-    <ScrollView contentContainerStyle={styles.container} keyboardShouldPersistTaps="handled">
-      <View style={styles.header}>
-        <Text style={styles.title}>Create Account</Text>
-        <Text style={styles.subtitle}>Start your learning journey today</Text>
-      </View>
-
-      <View style={styles.form}>
-        <View style={styles.inputGroup}>
-          <Text style={styles.label}>Full Name</Text>
-          <TextInput
-            style={styles.input}
-            placeholder="John Doe"
-            placeholderTextColor={COLORS.textMuted}
-            value={name}
-            onChangeText={setName}
-          />
+    <View style={{ flex: 1, backgroundColor: COLORS.background }}>
+      {loading && (
+        <View style={styles.overlay}>
+          <View style={styles.loaderContainer}>
+            <AppActivityIndicator size="large" />
+          </View>
+        </View>
+      )}
+      <KeyboardAwareScrollView
+        bottomOffset={40}
+        contentContainerStyle={styles.container}
+        showsVerticalScrollIndicator={false}
+        keyboardShouldPersistTaps="handled"
+      >
+        <View style={styles.header}>
+          <Text style={styles.title}>Create Account</Text>
+          <Text style={styles.subtitle}>Start your learning journey today</Text>
         </View>
 
-        <View style={styles.inputGroup}>
-          <Text style={styles.label}>Email Address</Text>
-          <TextInput
-            style={styles.input}
-            placeholder="you@example.com"
-            placeholderTextColor={COLORS.textMuted}
-            keyboardType="email-address"
-            autoCapitalize="none"
-            value={email}
-            onChangeText={setEmail}
-          />
-        </View>
+        <View style={styles.form}>
+          <View style={styles.inputGroup}>
+            <Text style={styles.label}>Full Name</Text>
+            <TextInput
+              style={styles.input}
+              placeholder="John Doe"
+              placeholderTextColor={COLORS.textMuted}
+              value={name}
+              onChangeText={setName}
+            />
+          </View>
 
-        <View style={styles.inputGroup}>
-          <Text style={styles.label}>Password</Text>
-          <TextInput
-            style={styles.input}
-            placeholder="••••••••"
-            placeholderTextColor={COLORS.textMuted}
-            secureTextEntry
-            value={password}
-            onChangeText={setPassword}
-          />
-        </View>
+          <View style={styles.inputGroup}>
+            <Text style={styles.label}>Email Address</Text>
+            <TextInput
+              style={styles.input}
+              placeholder="you@example.com"
+              placeholderTextColor={COLORS.textMuted}
+              keyboardType="email-address"
+              autoCapitalize="none"
+              value={email}
+              onChangeText={setEmail}
+            />
+          </View>
 
-        <Pressable style={styles.button} onPress={handleSignUp} disabled={loading}>
-          {loading ? (
-            <ActivityIndicator color="#ffffff" />
-          ) : (
+          <View style={styles.inputGroup}>
+            <Text style={styles.label}>Password</Text>
+            <TextInput
+              style={styles.input}
+              placeholder="••••••••"
+              placeholderTextColor={COLORS.textMuted}
+              secureTextEntry
+              value={password}
+              onChangeText={setPassword}
+            />
+          </View>
+
+          <Pressable style={styles.button} onPress={handleSignUp} disabled={loading}>
             <Text style={styles.buttonText}>Sign Up</Text>
-          )}
-        </Pressable>
-      </View>
-
-      <View style={styles.footer}>
-        <Text style={styles.footerText}>Already have an account? </Text>
-        <Link href="/(auth)/sign-in" asChild>
-          <Pressable>
-            <Text style={styles.footerLink}>Sign in</Text>
           </Pressable>
-        </Link>
-      </View>
-    </ScrollView>
+        </View>
+
+        <View style={styles.footer}>
+          <Text style={styles.footerText}>Already have an account? </Text>
+          <Link href="/(auth)/sign-in" asChild>
+            <Pressable>
+              <Text style={styles.footerLink}>Sign in</Text>
+            </Pressable>
+          </Link>
+        </View>
+      </KeyboardAwareScrollView>
+    </View>
   );
 }
 
@@ -174,5 +207,22 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: COLORS.primary,
     fontWeight: '700',
+  },
+  overlay: {
+    ...StyleSheet.absoluteFillObject,
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    justifyContent: 'center',
+    alignItems: 'center',
+    zIndex: 9999,
+  },
+  loaderContainer: {
+    backgroundColor: '#ffffff',
+    padding: 24,
+    borderRadius: 20,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.15,
+    shadowRadius: 12,
+    elevation: 5,
   },
 });
