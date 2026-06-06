@@ -1,4 +1,4 @@
-import { AuthProvider, RealmProvider, StoreProvider, useAuth } from '@/src/providers';
+import { AuthProvider, RealmProvider, StoreProvider, ThemeProvider, useAuth } from '@/src/providers';
 import { OfflineBanner } from '@/src/shared/components/OfflineBanner';
 import { SplashScreen } from '@/src/shared/components/SplashScreen';
 import { Stack, useRouter, useSegments } from 'expo-router';
@@ -44,12 +44,14 @@ export default function RootLayout() {
   return (
     <StoreProvider>
       <KeyboardProvider>
-        <RealmProvider>
-          <AuthProvider>
-            <RootLayoutNav />
-            <Toast />
-          </AuthProvider>
-        </RealmProvider>
+        <ThemeProvider>
+          <RealmProvider>
+            <AuthProvider>
+              <RootLayoutNav />
+              <Toast />
+            </AuthProvider>
+          </RealmProvider>
+        </ThemeProvider>
       </KeyboardProvider>
     </StoreProvider>
   );

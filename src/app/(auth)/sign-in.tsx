@@ -1,16 +1,19 @@
 import { AppActivityIndicator } from '@/src/shared/components/AppActivityIndicator';
 import { supabase } from '@/src/shared/config/supabase';
-import { BORDER_RADIUS, COLORS, SHADOWS, SPACING } from '@/src/shared/constants/theme';
+import { BORDER_RADIUS, AppColors, SHADOWS, SPACING } from '@/src/shared/constants/theme';
 import { AppLogger } from '@/src/utils/applogger';
 import { validateEmail } from '@/src/utils/helper';
 import { showToast } from '@/src/utils/toast';
 import { Link } from 'expo-router';
-import React, { useState } from 'react';
+import React, { useMemo,  useState } from 'react';
 import { Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-controller';
 import { useKeyboardAnimation } from '@/src/shared/hooks/useKeyboardAnimation';
+import { useAppTheme } from '@/src/shared/hooks/useAppTheme';
 
 export default function SignInScreen() {
+  const { colors: COLORS } = useAppTheme();
+  const styles = useMemo(() => createStyles(COLORS), [COLORS]);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
@@ -114,7 +117,7 @@ export default function SignInScreen() {
   );
 }
 
-const styles = StyleSheet.create({
+const createStyles = (COLORS: AppColors) => StyleSheet.create({
   container: {
     flexGrow: 1,
     backgroundColor: COLORS.background,

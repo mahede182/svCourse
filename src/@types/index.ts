@@ -1,4 +1,4 @@
-import type { Database } from './database.types';
+import type { Database } from './db.types';
 
 /** Convenience row types derived from the database schema */
 export type Course = Database['public']['Tables']['courses']['Row'];
