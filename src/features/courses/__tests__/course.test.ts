@@ -11,10 +11,8 @@ describe('CourseRepository', () => {
       objectForPrimaryKey: jest.fn((model, id) => mockDb[id]),
       create: jest.fn((model, data, updateMode) => {
         if (updateMode === 'modified' && mockDb[data._id]) {
-          // Merge
           mockDb[data._id] = { ...mockDb[data._id], ...data };
         } else {
-          // Create
           mockDb[data._id] = data;
         }
       }),
@@ -50,7 +48,6 @@ describe('CourseRepository', () => {
 
       expect(mockRealm.write).toHaveBeenCalled();
       expect(mockDb['course_1'].title).toBe('New Title');
-      // Verify local fields are preserved
       expect(mockDb['course_1'].enrolledUsers).toEqual(['user_99']);
       expect(mockDb['course_1'].sync_status).toBe('synced');
     });
