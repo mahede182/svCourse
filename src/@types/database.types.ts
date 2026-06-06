@@ -7,22 +7,46 @@ export type Database = {
     Tables: {
       courses: {
         Row: {
-          id: string;
+          course_id: string;
           title: string;
-          description: string | null;
-          cover_image_url: string | null;
+          description_short: string;
+          instructor_id: string | null;
+          instructor_name: string;
+          instructor_expertise_level: string | null;
+          duration_weeks: number;
+          price_usd: number;
+          is_premium: boolean;
+          tags: string[];
+          rating: number;
+          last_updated: string;
         };
         Insert: {
-          id?: string;
+          course_id?: string;
           title: string;
-          description?: string | null;
-          cover_image_url?: string | null;
+          description_short: string;
+          instructor_id?: string | null;
+          instructor_name: string;
+          instructor_expertise_level?: string | null;
+          duration_weeks: number;
+          price_usd: number;
+          is_premium: boolean;
+          tags: string[];
+          rating: number;
+          last_updated?: string;
         };
         Update: {
-          id?: string;
+          course_id?: string;
           title?: string;
-          description?: string | null;
-          cover_image_url?: string | null;
+          description_short?: string;
+          instructor_id?: string | null;
+          instructor_name?: string;
+          instructor_expertise_level?: string | null;
+          duration_weeks?: number;
+          price_usd?: number;
+          is_premium?: boolean;
+          tags?: string[];
+          rating?: number;
+          last_updated?: string;
         };
       };
       chapters: {
