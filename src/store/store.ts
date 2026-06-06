@@ -1,10 +1,10 @@
 import { configureStore } from '@reduxjs/toolkit';
 import { apiSlice } from './apiSlice';
-import uiReducer from './uiSlice';
+import courseReducer from './courseSlice';
 
 export const store = configureStore({
   reducer: {
-    ui: uiReducer,
+    course: courseReducer,
     [apiSlice.reducerPath]: apiSlice.reducer,
   },
   middleware: (getDefaultMiddleware) =>

@@ -7,7 +7,6 @@ export interface AppActivityIndicatorProps extends ActivityIndicatorProps {
 }
 
 export const AppActivityIndicator: React.FC<AppActivityIndicatorProps> = ({ size = 'small', style }) => {
-  // Map standard ActivityIndicator sizes to pixel values for the Lottie animation
   const sizeMap = {
     small: 40,
     large: 80,

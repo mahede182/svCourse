@@ -9,7 +9,6 @@ export const getItem = async (key: string) => {
         if (!res) return "";
         return JSON.parse(res);
     } catch {
-        // Silently fail or handle elsewhere
     }
 };
 
@@ -17,7 +16,6 @@ export const saveItem = async (key: string, value: unknown) => {
     try {
         await AsyncStorage.setItem(key, JSON.stringify(value));
     } catch {
-        // Silently fail or handle elsewhere
     }
 };
 
@@ -26,8 +24,6 @@ export const multiGetAsyncStore = async (keyList: string[], callback: (arg0: unk
         callback(data);
     });
 };
-
-// ─── Token helpers ──────────────────────────────────────────────────────────
 
 export const saveTokens = async (accessToken: string, refreshToken: string) => {
     await AsyncStorage.setItem(TOKEN_KEY, JSON.stringify({ accessToken, refreshToken }));

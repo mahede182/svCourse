@@ -1,7 +1,7 @@
-import React, { useState, useRef } from 'react';
-import { StyleSheet, View } from 'react-native';
-import LottieView from 'lottie-react-native';
 import * as ExpoSplashScreen from 'expo-splash-screen';
+import LottieView from 'lottie-react-native';
+import React, { useRef, useState } from 'react';
+import { StyleSheet, View } from 'react-native';
 import Animated, { FadeOut } from 'react-native-reanimated';
 
 interface SplashScreenProps {
@@ -20,13 +20,13 @@ export function SplashScreen({ children, isReady }: SplashScreenProps) {
   };
 
   const onAnimationLoaded = () => {
-    ExpoSplashScreen.hideAsync().catch(() => {});
+    ExpoSplashScreen.hideAsync().catch(() => { });
   };
 
   return (
     <View style={styles.container}>
       {children}
-      
+
       {!appReady && (
         <Animated.View
           exiting={FadeOut.duration(300)}
