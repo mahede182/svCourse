@@ -70,7 +70,25 @@ export default function CourseDetailScreen() {
         />
 
         <View style={styles.detailsContainer}>
-          <Text style={styles.title} selectable>{course.title}</Text>
+          <View style={styles.headerTitleRow}>
+            <Text style={styles.title} selectable>{course.title}</Text>
+            {course.isPremium && (
+              <View style={styles.premiumBadge}>
+                <Ionicons name="star" size={12} color="#fff" />
+                <Text style={styles.premiumText}>PRO</Text>
+              </View>
+            )}
+          </View>
+
+          {course.tags && course.tags.length > 0 && (
+            <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.tagsContainer}>
+              {course.tags.map((tag) => (
+                <View key={tag} style={styles.tagChip}>
+                  <Text style={styles.tagText}>{tag}</Text>
+                </View>
+              ))}
+            </ScrollView>
+          )}
           
           <View style={styles.instructorRow}>
             <View style={styles.avatarPlaceholder}>
@@ -227,12 +245,49 @@ const styles = StyleSheet.create({
     borderTopRightRadius: BORDER_RADIUS.xl,
     marginTop: -20,
   },
+  headerTitleRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'flex-start',
+    marginBottom: SPACING.sm,
+  },
   title: {
+    flex: 1,
     fontSize: 24,
     fontWeight: '800',
     color: COLORS.text,
-    marginBottom: SPACING.sm,
     letterSpacing: -0.5,
+    marginRight: SPACING.sm,
+  },
+  premiumBadge: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: COLORS.warning,
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    borderRadius: BORDER_RADIUS.sm,
+    gap: 4,
+  },
+  premiumText: {
+    color: '#fff',
+    fontSize: 10,
+    fontWeight: '800',
+  },
+  tagsContainer: {
+    flexDirection: 'row',
+    gap: SPACING.xs,
+    marginBottom: SPACING.md,
+  },
+  tagChip: {
+    backgroundColor: COLORS.primaryBg,
+    paddingHorizontal: 10,
+    paddingVertical: 4,
+    borderRadius: BORDER_RADIUS.sm,
+  },
+  tagText: {
+    color: COLORS.primary,
+    fontSize: 12,
+    fontWeight: '600',
   },
   instructorRow: {
     flexDirection: 'row',

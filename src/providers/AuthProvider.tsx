@@ -1,6 +1,8 @@
-import React, { createContext, useContext, useEffect, useState } from 'react';
-import { Session, User } from '@supabase/supabase-js';
 import { supabase } from '@/src/shared/config/supabase';
+import { AppLogger } from '@/src/utils/applogger';
+import { Session, User } from '@supabase/supabase-js';
+import React, { createContext, useContext, useEffect, useState } from 'react';
+import { AppState, AppStateStatus } from 'react-native';
 
 type AuthContextType = {
   session: Session | null;
@@ -22,7 +24,12 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [isInitialized, setIsInitialized] = useState<boolean>(false);
 
   useEffect(() => {
-    supabase.auth.getSession().then(({ data: { session } }) => {
+    supabase.auth.getSession().then(({ data: { session }, error }) => {
+      if (error) {
+        AppLogger.error('Session error:', error.message);
+        // Clear corrupted session to fix invalid refresh token loops
+        supabase.auth.signOut();
+      }
       setSession(session);
       setUser(session?.user ?? null);
       setIsInitialized(true);
@@ -33,8 +40,17 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       setUser(session?.user ?? null);
     });
 
+    const appStateListener = AppState.addEventListener('change', (state: AppStateStatus) => {
+      if (state === 'active') {
+        supabase.auth.startAutoRefresh();
+      } else {
+        supabase.auth.stopAutoRefresh();
+      }
+    });
+
     return () => {
       subscription.unsubscribe();
+      appStateListener.remove();
     };
   }, []);
 

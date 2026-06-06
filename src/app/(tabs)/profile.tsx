@@ -3,12 +3,21 @@ import { AppActivityIndicator } from '@/src/shared/components/AppActivityIndicat
 import { supabase } from '@/src/shared/config/supabase';
 import { BORDER_RADIUS, COLORS, SHADOWS, SPACING } from '@/src/shared/constants/theme';
 import { Ionicons } from '@expo/vector-icons';
-import React, { useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
+import { useQuery } from '@realm/react';
+import { CourseModel } from '@/src/features/courses';
 
 export default function ProfileScreen() {
   const { user } = useAuth();
   const [loading, setLoading] = useState(false);
+  
+  const baseCourses = useQuery(CourseModel);
+  const lastSynced = useMemo(() => {
+    if (baseCourses.length === 0) return null;
+    const sorted = baseCourses.sorted('lastUpdated', true);
+    return new Date(sorted[0].lastUpdated).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+  }, [baseCourses]);
 
   const handleLogout = async () => {
     setLoading(true);
@@ -30,7 +39,10 @@ export default function ProfileScreen() {
         </View>
       )}
       <View style={styles.header}>
-        <Text style={styles.headerTitle}>Profile</Text>
+        <View style={styles.headerRow}>
+          <Text style={styles.headerTitle}>Profile</Text>
+          {lastSynced && <Text style={styles.syncText}>Last synced: {lastSynced}</Text>}
+        </View>
       </View>
 
       <View style={styles.profileCard}>
@@ -81,11 +93,20 @@ const styles = StyleSheet.create({
     paddingHorizontal: SPACING.lg,
     marginBottom: SPACING.xl,
   },
+  headerRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'baseline',
+  },
   headerTitle: {
     fontSize: 32,
     fontWeight: '800',
     color: COLORS.text,
     letterSpacing: -0.5,
+  },
+  syncText: {
+    fontSize: 12,
+    color: COLORS.textSecondary,
   },
   profileCard: {
     backgroundColor: COLORS.surface,
@@ -148,7 +169,7 @@ const styles = StyleSheet.create({
     borderBottomWidth: 0,
   },
   logoutIconBg: {
-    backgroundColor: '#fee2e2', // Light red
+    backgroundColor: '#fee2e2',
   },
   logoutText: {
     flex: 1,

@@ -1,27 +1,26 @@
 export const COLORS = {
-  primary: '#4f46e5', // Indigo 600
-  primaryLight: '#818cf8', // Indigo 400
-  primaryDark: '#3730a3', // Indigo 800
-  primaryBg: '#e0e7ff', // Indigo 100
+  primary: '#4f46e5',
+  primaryLight: '#818cf8',
+  primaryDark: '#3730a3',
+  primaryBg: '#e0e7ff',
 
-  background: '#f8fafc', // Slate 50
+  background: '#f8fafc',
   surface: '#ffffff',
   
-  text: '#0f172a', // Slate 900
-  textSecondary: '#64748b', // Slate 500
-  textMuted: '#94a3b8', // Slate 400
+  text: '#0f172a',
+  textSecondary: '#64748b',
+  textMuted: '#94a3b8',
 
-  border: '#e2e8f0', // Slate 200
+  border: '#e2e8f0',
 
-  success: '#10b981', // Emerald 500
-  error: '#ef4444', // Red 500
-  warning: '#f59e0b', // Amber 500
+  success: '#10b981',
+  error: '#ef4444',
+  warning: '#f59e0b',
   
-  // Custom course tags
-  design: '#0ea5e9', // Sky 500
-  coding: '#f59e0b', // Amber 500
-  business: '#10b981', // Emerald 500
-  finance: '#8b5cf6', // Violet 500
+  design: '#0ea5e9',
+  coding: '#f59e0b',
+  business: '#10b981',
+  finance: '#8b5cf6',
 };
 
 export const SPACING = {

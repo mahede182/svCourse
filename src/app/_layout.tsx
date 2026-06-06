@@ -1,12 +1,11 @@
+import { AuthProvider, RealmProvider, StoreProvider, useAuth } from '@/src/providers';
+import { OfflineBanner } from '@/src/shared/components/OfflineBanner';
+import { SplashScreen } from '@/src/shared/components/SplashScreen';
 import { Stack, useRouter, useSegments } from 'expo-router';
 import * as ExpoSplashScreen from 'expo-splash-screen';
 import { useEffect } from 'react';
 import Toast from 'react-native-toast-message';
 import 'react-native-url-polyfill/auto';
-
-import { AuthProvider, RealmProvider, StoreProvider, useAuth } from '@/src/providers';
-import { OfflineBanner } from '@/src/shared/components/OfflineBanner';
-import { SplashScreen } from '@/src/shared/components/SplashScreen';
 import { KeyboardProvider } from '../providers/KeyboardProvider';
 
 ExpoSplashScreen.preventAutoHideAsync().catch(() => { });

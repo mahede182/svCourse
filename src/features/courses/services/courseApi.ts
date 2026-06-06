@@ -34,14 +34,16 @@ export const courseApi = apiSlice.injectEndpoints({
       async onQueryStarted(_, { queryFulfilled }) {
         try {
           const { data } = await queryFulfilled;
-          if (realmInstance && data) {
+          if (realmInstance && Array.isArray(data)) {
             CourseRepository.upsertFromRemote(
               realmInstance,
               data as unknown as Array<Record<string, unknown>>
             );
+          } else if (data && !Array.isArray(data)) {
+            console.error('Invalid response shape from Supabase: Expected an array.');
           }
-        } catch {
-          // Network failure — Realm still has local data, UI is unaffected
+        } catch (err) {
+          console.error('Supabase request failed:', err);
         }
       },
     }),
