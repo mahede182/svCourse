@@ -5,9 +5,12 @@ import { useQuery } from '@realm/react';
 import { CourseModel } from '@/src/features/courses';
 import { CourseCard } from '@/src/shared/components/CourseCard';
 import { useAuth } from '@/src/providers';
-import { COLORS, SPACING } from '@/src/shared/constants/theme';
+import { AppColors, SPACING } from '@/src/shared/constants/theme';
+import { useAppTheme } from '@/src/shared/hooks/useAppTheme';
 
 export default function FavouriteScreen() {
+  const { colors: COLORS } = useAppTheme();
+  const styles = useMemo(() => createStyles(COLORS), [COLORS]);
   const { user } = useAuth();
   const baseCourses = useQuery(CourseModel);
 
@@ -43,7 +46,7 @@ export default function FavouriteScreen() {
   );
 }
 
-const styles = StyleSheet.create({
+const createStyles = (COLORS: AppColors) => StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: COLORS.background,

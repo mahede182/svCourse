@@ -1,4 +1,4 @@
-export const COLORS = {
+export const lightColors = {
   primary: '#4f46e5',
   primaryLight: '#818cf8',
   primaryDark: '#3730a3',
@@ -22,6 +22,36 @@ export const COLORS = {
   business: '#10b981',
   finance: '#8b5cf6',
 };
+
+export const darkColors = {
+  primary: '#6366f1',
+  primaryLight: '#818cf8',
+  primaryDark: '#4338ca',
+  primaryBg: '#312e81',
+
+  background: '#0f172a',
+  surface: '#1e293b',
+  
+  text: '#f8fafc',
+  textSecondary: '#94a3b8',
+  textMuted: '#64748b',
+
+  border: '#334155',
+
+  success: '#10b981',
+  error: '#ef4444',
+  warning: '#f59e0b',
+  
+  design: '#0ea5e9',
+  coding: '#f59e0b',
+  business: '#10b981',
+  finance: '#8b5cf6',
+};
+
+export type AppColors = typeof lightColors;
+
+// Default export for backward compatibility during refactor, will be removed if all refactored.
+export const COLORS = lightColors;
 
 export const SPACING = {
   xs: 4,

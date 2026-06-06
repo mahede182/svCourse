@@ -1,10 +1,13 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 import Animated, { FadeInUp, FadeOutUp } from 'react-native-reanimated';
-import { COLORS } from '../constants/theme';
+import { AppColors } from '../constants/theme';
 import { useNetworkStatus } from '../hooks/useNetworkStatus';
+import { useAppTheme } from '@/src/shared/hooks/useAppTheme';
 
 export function OfflineBanner() {
+  const { colors: COLORS } = useAppTheme();
+  const styles = useMemo(() => createStyles(COLORS), [COLORS]);
   const { isConnected } = useNetworkStatus();
 
   if (isConnected) return null;
@@ -23,7 +26,7 @@ export function OfflineBanner() {
   );
 }
 
-const styles = StyleSheet.create({
+const createStyles = (COLORS: AppColors) => StyleSheet.create({
   banner: {
     flexDirection: 'row',
     alignItems: 'center',

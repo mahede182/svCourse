@@ -17,13 +17,17 @@ import Toast from 'react-native-toast-message';
 
 import { CourseModel, CourseRepository, setRealmInstance, useGetCoursesQuery } from '@/src/features/courses';
 import { useAuth } from '@/src/providers';
-import { BORDER_RADIUS, COLORS, SHADOWS, SPACING } from '@/src/shared/constants/theme';
+import { BORDER_RADIUS, AppColors, SHADOWS, SPACING } from '@/src/shared/constants/theme';
 import { useDebounce } from '@/src/shared/hooks/useDebounce';
 import { setPremiumFilter, setSearchQuery, setSortOption, toggleEnrolledFilter, useAppDispatch, useAppSelector } from '@/src/store';
 
 import { CourseCard } from '@/src/shared/components/CourseCard';
+import { Skeleton } from '@/src/shared/components/Skeleton';
+import { useAppTheme } from '@/src/shared/hooks/useAppTheme';
 
 export default function CoursesScreen() {
+  const { colors: COLORS } = useAppTheme();
+  const styles = useMemo(() => createStyles(COLORS), [COLORS]);
   const realm = useRealm();
   const dispatch = useAppDispatch();
   const { user } = useAuth();
@@ -204,9 +208,22 @@ export default function CoursesScreen() {
           />
         }
         ListEmptyComponent={
-          isFetching && !isRefreshing ? (
-            <View style={styles.center}>
-              <AppActivityIndicator size="large" />
+          isFetching && !isRefreshing && courses.length === 0 ? (
+            <View style={styles.skeletonContainer}>
+              {[1, 2, 3].map((key) => (
+                <View key={key} style={styles.cardSkeleton}>
+                  <Skeleton height={160} width="100%" borderRadius={0} />
+                  <View style={{ padding: 16 }}>
+                    <Skeleton height={24} width="80%" style={{ marginBottom: 8 }} />
+                    <Skeleton height={16} width="100%" style={{ marginBottom: 4 }} />
+                    <Skeleton height={16} width="60%" style={{ marginBottom: 16 }} />
+                    <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
+                      <Skeleton height={20} width={40} />
+                      <Skeleton height={20} width={60} />
+                    </View>
+                  </View>
+                </View>
+              ))}
             </View>
           ) : error ? (
             <View style={styles.emptyContainer}>
@@ -233,11 +250,21 @@ export default function CoursesScreen() {
   );
 }
 
-const styles = StyleSheet.create({
+const createStyles = (COLORS: AppColors) => StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: COLORS.background,
     paddingTop: 40,
+  },
+  skeletonContainer: {
+    paddingTop: SPACING.xs,
+  },
+  cardSkeleton: {
+    backgroundColor: COLORS.surface,
+    borderRadius: BORDER_RADIUS.xl,
+    marginBottom: SPACING.lg,
+    overflow: 'hidden',
+    ...SHADOWS.md,
   },
   center: {
     flex: 1,

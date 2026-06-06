@@ -1,11 +1,12 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { View, Text, Pressable, StyleSheet } from 'react-native';
 import { Image } from 'expo-image';
 import { Link } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { CourseModel } from '@/src/features/courses';
-import { COLORS, SPACING, BORDER_RADIUS, SHADOWS } from '@/src/shared/constants/theme';
+import { AppColors, SPACING, BORDER_RADIUS, SHADOWS } from '@/src/shared/constants/theme';
 import { DEFAULT_COURSE_IMAGE } from '@/src/shared/constants/url';
+import { useAppTheme } from '@/src/shared/hooks/useAppTheme';
 
 interface CourseCardProps {
   item: CourseModel;
@@ -13,6 +14,8 @@ interface CourseCardProps {
 }
 
 export const CourseCard = React.memo(({ item, userId }: CourseCardProps) => {
+  const { colors: COLORS } = useAppTheme();
+  const styles = useMemo(() => createStyles(COLORS), [COLORS]);
   const isEnrolled = userId ? item.enrolledUsers.includes(userId) : false;
 
   return (
@@ -51,7 +54,7 @@ export const CourseCard = React.memo(({ item, userId }: CourseCardProps) => {
 
 CourseCard.displayName = 'CourseCard';
 
-const styles = StyleSheet.create({
+const createStyles = (COLORS: AppColors) => StyleSheet.create({
   card: {
     backgroundColor: COLORS.surface,
     borderRadius: BORDER_RADIUS.xl,

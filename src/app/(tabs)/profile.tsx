@@ -1,14 +1,17 @@
 import { useAuth } from '@/src/providers';
 import { AppActivityIndicator } from '@/src/shared/components/AppActivityIndicator';
 import { supabase } from '@/src/shared/config/supabase';
-import { BORDER_RADIUS, COLORS, SHADOWS, SPACING } from '@/src/shared/constants/theme';
+import { BORDER_RADIUS, AppColors, SHADOWS, SPACING } from '@/src/shared/constants/theme';
 import { Ionicons } from '@expo/vector-icons';
 import React, { useMemo, useState } from 'react';
-import { Pressable, StyleSheet, Text, View } from 'react-native';
+import { Pressable, StyleSheet, Text, View, Switch } from 'react-native';
 import { useQuery } from '@realm/react';
 import { CourseModel } from '@/src/features/courses';
+import { useAppTheme } from '@/src/shared/hooks/useAppTheme';
 
 export default function ProfileScreen() {
+  const { colors: COLORS, themeMode, setThemeMode } = useAppTheme();
+  const styles = useMemo(() => createStyles(COLORS), [COLORS]);
   const { user } = useAuth();
   const [loading, setLoading] = useState(false);
   
@@ -54,6 +57,19 @@ export default function ProfileScreen() {
       </View>
 
       <View style={styles.menuContainer}>
+        <View style={styles.menuItem}>
+          <View style={styles.menuIconBg}>
+            <Ionicons name="moon-outline" size={20} color={COLORS.text} />
+          </View>
+          <Text style={styles.menuText}>Dark Mode</Text>
+          <Switch
+            value={themeMode === 'dark'}
+            onValueChange={(val) => setThemeMode(val ? 'dark' : 'light')}
+            trackColor={{ false: COLORS.border, true: COLORS.primary }}
+            thumbColor={'#ffffff'}
+          />
+        </View>
+
         <Pressable style={styles.menuItem}>
           <View style={styles.menuIconBg}>
             <Ionicons name="settings-outline" size={20} color={COLORS.text} />
@@ -83,7 +99,7 @@ export default function ProfileScreen() {
   );
 }
 
-const styles = StyleSheet.create({
+const createStyles = (COLORS: AppColors) => StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: COLORS.background,

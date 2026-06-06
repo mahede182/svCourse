@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useMemo,  useState } from 'react';
 import { View, Text, StyleSheet, Pressable, ScrollView } from 'react-native';
 import { useLocalSearchParams, router } from 'expo-router';
 import { useObject, useRealm } from '@realm/react';
@@ -6,10 +6,13 @@ import { Image } from 'expo-image';
 import { Ionicons } from '@expo/vector-icons';
 import { CourseModel, CourseRepository } from '@/src/features/courses';
 import { useAuth } from '@/src/providers';
-import { COLORS, SPACING, BORDER_RADIUS, SHADOWS } from '@/src/shared/constants/theme';
+import { AppColors, SPACING, BORDER_RADIUS, SHADOWS } from '@/src/shared/constants/theme';
 import { DEFAULT_COURSE_IMAGE } from '@/src/shared/constants/url';
+import { useAppTheme } from '@/src/shared/hooks/useAppTheme';
 
 export default function CourseDetailScreen() {
+  const { colors: COLORS } = useAppTheme();
+  const styles = useMemo(() => createStyles(COLORS), [COLORS]);
   const { id } = useLocalSearchParams<{ id: string }>();
   const realm = useRealm();
   const course = useObject(CourseModel, id);
@@ -178,7 +181,7 @@ export default function CourseDetailScreen() {
   );
 }
 
-const styles = StyleSheet.create({
+const createStyles = (COLORS: AppColors) => StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: COLORS.background,
